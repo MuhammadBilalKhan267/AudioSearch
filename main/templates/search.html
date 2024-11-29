@@ -1,25 +1,69 @@
-<!-- audio_list.html -->
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Audio List</title>
+    <title>AudioSearch - Find Your Sound</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+    {% load static %}
+    <link href = "{% static "css/search.css" %}" rel="stylesheet"/>
 </head>
 <body>
-    <h1>Uploaded Audio Files</h1>
-    <ul>
-        {% for audio in audios %}
-            <li>
-                <audio controls>
-                    <source src="{{ audio.audio.url }}" type="audio/mpeg">
-                    Your browser does not support the audio element.
-                </audio>
-                <p>Uploaded at: {{ audio.uploaded_at }}</p>
-            </li>
-        {% empty %}
-            <p>No audio files uploaded yet.</p>
-        {% endfor %}
-    </ul>
+    <div class="container">
+        <div id="center-logo" class="centered">
+            <div class="logo">
+                <div class="logo-icon">AS</div>
+                <h1>AudioSearch</h1>
+            </div>
+
+            <div class="search-wrapper" id="searchWrapper">
+                <form method="GET" class="search-form" id="searchForm">
+                    <input type="text" id="query" name="query" placeholder="Search Audios..." required>
+                    <button type="submit">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="11" cy="11" r="8"></circle>
+                            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                        </svg>
+                        Search
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        {% if audios is not None %}
+            <section class="results-section" id="resultsSection">
+                <ul class="audio-list">
+                    {% for audio in audios %}
+                        <li class="audio-item">
+                            <audio controls>
+                                <source src="{{ audio.audio.url }}" type="audio/mpeg">
+                                Your browser does not support the audio element.
+                            </audio>
+                            <p>Uploaded at: {{ audio.uploaded_at }}</p>
+                        </li>
+                    {% empty %}
+                        <li>No audio files found for your query.</li>
+                    {% endfor %}
+                </ul>
+            </section>
+        {% endif %}
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const centered = document.getElementById('center-logo');
+            const resultsSection = document.getElementById('resultsSection');
+
+            // Check if there are any results
+            const hasResults = document.querySelector('.audio-list li:not(:empty)');
+
+            if (hasResults) {
+                // If results exist, move search to top
+                centered.classList.remove('centered');
+                resultsSection.style.display = 'block';
+            } 
+        });
+    </script>
 </body>
 </html>
